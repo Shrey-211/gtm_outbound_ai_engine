@@ -75,6 +75,9 @@ def _build_result(email: ColdEmail, prompt_tokens: int, completion_tokens: int) 
 
 
 def generate_email(prompt: str) -> dict:
+    print(f"[AI]    ⚡ Calling OpenAI  model={MODEL}  temp=0.4 …")
+    t0 = time.time()
+
     response = client.beta.chat.completions.parse(
         model=MODEL,
         messages=[{"role": "user", "content": prompt}],
@@ -82,16 +85,26 @@ def generate_email(prompt: str) -> dict:
         temperature=0.4,
         top_p=0.9,
     )
+
+    elapsed = time.time() - t0
     email: ColdEmail = response.choices[0].message.parsed
     usage = response.usage
     prompt_tokens = usage.prompt_tokens if usage else 0
     completion_tokens = usage.completion_tokens if usage else 0
-    return _build_result(email, prompt_tokens, completion_tokens)
+    result = _build_result(email, prompt_tokens, completion_tokens)
+
+    print(f"[AI]    ✓ Response in {elapsed:.1f}s  "
+          f"tokens={prompt_tokens}+{completion_tokens}={prompt_tokens + completion_tokens}  "
+          f"cost=${result['cost_usd']:.6f}")
+    print(f"[AI]      subject: {email.subject[:80]}")
+
+    return result
 
 
 # --- Batch API ---
 
 def prepare_batch_file(prompts: list[str], batch_path: Path) -> Path:
+    print(f"[BATCH-PREP] Writing {len(prompts)} requests → {batch_path.name}")
     response_format = _cold_email_response_format()
     with open(batch_path, "w", encoding="utf-8") as f:
         for i, prompt in enumerate(prompts):
@@ -108,30 +121,38 @@ def prepare_batch_file(prompts: list[str], batch_path: Path) -> Path:
                 },
             }
             f.write(json.dumps(request) + "\n")
+    print(f"[BATCH-PREP] Done – {batch_path.stat().st_size / 1024:.1f} KB")
     return batch_path
 
 
 def submit_batch(batch_path: Path) -> str:
+    print(f"[AI]    ⚡ Uploading batch file to OpenAI …")
     with open(batch_path, "rb") as f:
         batch_file = client.files.create(file=f, purpose="batch")
+    print(f"[AI]    ⚡ Submitting batch  model={MODEL}  file={batch_file.id} …")
     batch = client.batches.create(
         input_file_id=batch_file.id,
         endpoint="/v1/chat/completions",
         completion_window="24h",
     )
-    print(f"[BATCH] Submitted batch {batch.id} with file {batch_file.id}")
+    print(f"[AI]    ✓ Batch created: {batch.id}")
     return batch.id
 
 
 def poll_batch(batch_id: str, poll_interval: int = 15) -> object:
+    print(f"[AI]    ⏳ Polling batch {batch_id} every {poll_interval}s …")
+    poll_count = 0
     while True:
         batch = client.batches.retrieve(batch_id)
         completed = batch.request_counts.completed if batch.request_counts else 0
         total = batch.request_counts.total if batch.request_counts else 0
         failed = batch.request_counts.failed if batch.request_counts else 0
-        print(f"[BATCH] Status: {batch.status} | Progress: {completed}/{total} | Failed: {failed}")
+        poll_count += 1
+        print(f"[AI]    ⏳ Poll #{poll_count}: status={batch.status}  "
+              f"progress={completed}/{total}  failed={failed}")
 
         if batch.status == "completed":
+            print(f"[AI]    ✓ Batch completed – {completed} results ready")
             return batch
         if batch.status in ("failed", "expired", "cancelled"):
             raise RuntimeError(f"Batch {batch.status}: {batch.errors}")
@@ -139,8 +160,10 @@ def poll_batch(batch_id: str, poll_interval: int = 15) -> object:
 
 
 def parse_batch_results(batch) -> list[dict]:
+    print(f"[AI]    Downloading batch results from {batch.output_file_id} …")
     result_content = client.files.content(batch.output_file_id)
     results = {}
+    total_cost = 0.0
     for line in result_content.text.strip().split("\n"):
         data = json.loads(line)
         idx = int(data["custom_id"].split("-")[1])
@@ -153,6 +176,10 @@ def parse_batch_results(batch) -> list[dict]:
         prompt_tokens = usage.get("prompt_tokens", 0)
         completion_tokens = usage.get("completion_tokens", 0)
 
-        results[idx] = _build_result(email, prompt_tokens, completion_tokens)
+        result = _build_result(email, prompt_tokens, completion_tokens)
+        total_cost += result["cost_usd"]
+        results[idx] = result
 
+    print(f"[AI]    ✓ Parsed {len(results)} batch results  "
+          f"total_cost=${total_cost:.6f}")
     return [results[i] for i in sorted(results.keys())]
