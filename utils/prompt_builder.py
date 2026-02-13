@@ -70,7 +70,7 @@ def build_prompt(row, segment, company_size="unknown"):
         Segment angle: {angle}
 
         Rules:
-        - Body under 200 words. One clear CTA. No fluff. Sound human, and friendly not AI.
+        - Body under 120 words. One clear CTA. No fluff. Sound human, and friendly not AI.
         - Reference their PMS, property type, or region where it fits naturally.
         - If a contact field says "Not specified", do NOT mention that field in the email.
 
