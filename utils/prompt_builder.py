@@ -1,8 +1,5 @@
-"""
-Build cold-email prompts with segment-specific angles based on property type.
-"""
+import pandas as pd
 
-# Each segment gets a tailored angle that tells the AI what to emphasise
 _SEGMENT_ANGLES = {
     "vacation_rental": (
         "This contact manages vacation rentals. "
@@ -42,23 +39,25 @@ _SEGMENT_ANGLES = {
 }
 
 
-def build_prompt(row, segment, company_size="unknown"):
-    """
-    Build the outbound cold-email prompt.
+def _safe(value, fallback="Not specified"):
+    if value is None or pd.isna(value) or not str(value).strip():
+        return fallback
+    return str(value).strip()
 
-    Uses the segment (derived from property type) to inject a tailored angle
-    so the AI generates a more relevant, personalised email.
-    """
-    pms = row.get("PMS") or "Not specified"
-    property_type = row.get("type_of_properties_managed") or "Not specified"
-    region = row.get("region") or "Not specified"
+
+def build_prompt(row, segment, company_size="unknown"):
+    first_name = _safe(row.get("first_name"), "there")
+    company = _safe(row.get("company_name"))
+    pms = _safe(row.get("PMS"))
+    property_type = _safe(row.get("type_of_properties_managed"))
+    region = _safe(row.get("region"))
 
     angle = _SEGMENT_ANGLES.get(segment, _SEGMENT_ANGLES["general"])
 
     contact_block = f"""
         Contact (use these for personalization):
-        - First Name: {row.get("first_name")}
-        - Company: {row.get("company_name")}
+        - First Name: {first_name}
+        - Company: {company}
         - PMS: {pms}
         - Property type: {property_type}
         - Region: {region}
@@ -73,10 +72,11 @@ def build_prompt(row, segment, company_size="unknown"):
         Rules:
         - Body under 200 words. One clear CTA. No fluff. Sound human, and friendly not AI.
         - Reference their PMS, property type, or region where it fits naturally.
+        - If a contact field says "Not specified", do NOT mention that field in the email.
 
         Output fields:
         - subject: A compelling, concise email subject line.
-        - greetings: The opening greeting (e.g. "Hi {{first_name}},").
+        - greetings: The opening greeting (e.g. "Hi {first_name},").
         - body: The core email content with value prop and CTA. Split in 2 paragraphs. Do NOT include the greeting or sign-off here.
         """
 

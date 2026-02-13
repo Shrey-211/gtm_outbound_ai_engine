@@ -5,11 +5,9 @@ from dotenv import load_dotenv
 import pandas as pd
 import time
 
-# Load .env from repo root so OPENAI_API_KEY is set
 _REPO_ROOT = Path(__file__).resolve().parent
 load_dotenv(_REPO_ROOT / ".env")
 
-# Run from repo root: python main.py
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
@@ -20,7 +18,6 @@ from utils.ai_engine import generate_email
 
 
 def _run_pipeline(contacts: pd.DataFrame, limit: int) -> tuple[pd.DataFrame, float]:
-    """Run segment -> prompt -> generate for cold outreach contacts."""
     results = []
     total_cost = 0.0
     for _, row in contacts.head(limit).iterrows():
@@ -32,7 +29,7 @@ def _run_pipeline(contacts: pd.DataFrame, limit: int) -> tuple[pd.DataFrame, flo
         total_cost += result["cost_usd"]
         complete_email = f"{result['greetings']}\n\n{result['body']}\n\n{result['signature']}"
         results.append({
-            "email": row["email"],
+            "email": row.get("email", ""),
             "segment": segment,
             "subject": result["subject"],
             "greetings": result["greetings"],
@@ -52,20 +49,19 @@ def run():
     csv_path = os.environ.get("CSV_PATH", _REPO_ROOT / "data" / "database_dummy.csv")
     csv_path = Path(csv_path)
     if not csv_path.exists():
-        raise FileNotFoundError(
-            f"CSV not found: {csv_path}. Set CSV_PATH or place pricelabs_gtm_database_sample.csv in data/ as database.csv"
-        )
+        raise FileNotFoundError(f"CSV not found: {csv_path}")
 
     contacts = load_cold_outreach_contacts(csv_path)
-
     limit = int(os.environ.get("OUTBOUND_LIMIT", "5"))
-
     out_emails, total_cost = _run_pipeline(contacts, limit)
 
-    out_path = _REPO_ROOT / "results" / f"generated_emails_{time.time()}.csv"
+    out_dir = _REPO_ROOT / "results"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"generated_emails_{time.time()}.csv"
     out_emails.to_csv(out_path, index=False)
     print(f"Cold outreach: {len(out_emails)} emails -> {out_path} (${total_cost:.4f})")
     print(f"Total: ${total_cost:.4f} USD")
+
 
 if __name__ == "__main__":
     run()
