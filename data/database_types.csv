@@ -1,0 +1,55 @@
+Field Name,Data Type,Description,Example Values
+email,String,Contact's email address used as the primary identifier in the database,john.smith@vacationco.com
+first_name,String,Contact's first name,John
+last_name,String,Contact's last name,Smith
+Zoho_CRM_ID,String,Unique identifier for this contact in Zoho CRM,ZCR123456
+User_ID,String,Unique identifier assigned when a contact creates a PriceLabs account. Null for prospects and most leads.,USR12345
+primary_email,String,The primary email associated with the contact's PriceLabs account. May differ from the email field if the contact uses multiple emails.,john@gmail.com
+MU_count,Integer,Total number of managed units (listings/properties) added to the contact's PriceLabs account,25
+MU_Sync_Count,Integer,Number of managed units actively synced with a PMS. A synced unit means PriceLabs is pushing pricing updates.,20
+MU_count_list,Integer,Number of managed units visible in the contact's listing view. Typically matches MU_count.,25
+billing_stat,String,Current billing status of the contact's account,active / trial / expired / cancelled / free
+city,String,"Contact's city (business location, not listing location)",Miami
+state,String,Contact's state or province,Florida
+country,String,Contact's country. Note: formatting is inconsistent across records.,United States / US / USA
+region,String,Broad geographic region of the contact,North America / Europe / APAC / LATAM / Middle East / Africa
+account_owner,String,PriceLabs team member who owns this account relationship,Sarah M
+phone,String,Contact's phone number,+12025551234
+website,String,Contact's company website URL,https://www.vacationco.com
+language,String,Contact's preferred language (ISO 639-1 code),en / es / fr / de / pt / ja / it
+PMS,String,Property Management System the contact uses or is associated with,Guesty / Hostaway / Lodgify / OwnerRez
+lead_source,String,How this contact originally entered the database,Website / Webinar / Google Ads / Referral / Cold Outbound / Partner / Organic
+type_of_properties_managed,String,Category of properties the contact manages,Vacation Rental / Short-term Rental / Hotel / Boutique Hotel / Serviced Apartment / Mixed
+company_name,String,Name of the contact's company or property management business,John's Rentals
+Linkedin_URLs,String,Contact's LinkedIn profile URL,https://linkedin.com/in/john-smith-123
+FB_URLs,String,Contact's Facebook profile or page URL,https://facebook.com/johnsmith
+Insta_URLs,String,Contact's Instagram profile URL,https://instagram.com/john_smith
+Unsubscribed,Boolean,Whether the contact has opted out of marketing emails,TRUE / FALSE
+referral_code,String,"Referral code associated with this contact, if they came through a referral",REF1234
+created_time,Date,Date the contact created a PriceLabs account. Null for prospects who haven't signed up.,2024-03-15
+free_date_trial_ended,Date,Date the contact's free trial period ended. Only populated for trial users.,2024-04-15
+country_with_listings,String,Countries where the contact has active listings (comma-separated). Only populated for trial/paying users.,"US, Spain, Portugal"
+cities_with_listings,String,Cities where the contact has active listings (comma-separated). Only populated for trial/paying users.,"Miami, Barcelona, Lisbon"
+type,String,Current lifecycle stage of the contact in the database,prospect / lead / trial / customer
+domain,String,Email domain extracted from the contact's email address,vacationco.com / gmail.com
+location_all,String,"Concatenated location string combining city, state, and country","Miami, Florida, United States"
+is_blocked_domain,Boolean,"Whether the contact's email domain is on the blocked list (spam, competitors, etc.)",TRUE / FALSE
+is_generic_domain,Boolean,"Whether the contact uses a generic email provider (Gmail, Yahoo, etc.) vs. a company domain",TRUE / FALSE
+job_title,String,Contact's job title or role,Property Manager / Revenue Manager / CEO / Owner
+Event_Attended,String,Name of the last event or conference the contact attended,PriceLabs Summit 2024 / VRMA Conference
+domain_status,String,Email deliverability status of the contact's domain,valid / catch-all / invalid
+mailchimp_emails_sent,Integer,Total number of emails sent to this contact via Mailchimp,5
+outbound_emails_sent,Integer,Total number of outbound/cold emails sent to this contact,3
+cio_emails_sent,Integer,Total number of emails sent to this contact via Customer.io,12
+total_emails_sent,Integer,Total emails sent across all platforms. Note: may not always equal the sum of individual platform counts.,20
+last_email_sent_timestamp,Date,Date the most recent email was sent to this contact,2024-11-20
+last_campaign_name,String,Name of the most recent email campaign sent to this contact,Feature Update / Re-engagement / Trial Nudge
+last_source_name,String,Platform used to send the most recent email,Mailchimp / Customer.io / Outbound / Manual
+first_email_sent_timestamp,Date,Date the first email was ever sent to this contact,2023-06-15
+first_campaign_name,String,Name of the first email campaign sent to this contact,Welcome Series
+first_source_name,String,Platform used to send the first email,Mailchimp / Customer.io / Outbound / Manual
+email_before_signup_sent_timestamp,Date,Date of the last email sent to this contact before they created an account. Useful for attribution.,2024-03-10
+email_before_signup_campaign_name,String,Campaign name of the last email sent before signup,Case Study / Pricing Tips
+email_before_signup_source_name,String,Platform used for the last email sent before signup,Mailchimp / Customer.io / Outbound
+Webinar_attended,Boolean,Whether the contact has attended any PriceLabs webinar,TRUE / FALSE
+is_primary_email,Boolean,Whether this email is the contact's primary email in the system. FALSE may indicate a secondary or outdated email.,TRUE / FALSE
