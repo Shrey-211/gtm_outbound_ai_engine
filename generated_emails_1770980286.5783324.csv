@@ -1,0 +1,32 @@
+email,segment,generated_email,model,input_tokens,output_tokens,total_tokens,cost_usd
+maria.martinez@beachstays.com,standard_smb,"Subject: Boost Revenue for Maria’s Hospitality with PriceLabs + Escapia
+
+Hi Maria,
+
+I noticed Maria’s Hospitality uses Escapia to manage your mixed portfolio across Africa. I’m reaching out because PriceLabs integrates directly with Escapia to automate dynamic pricing and stay restrictions—helping you increase revenue and save hours on rate updates.
+
+Would you be open to a quick demo to see how PriceLabs can optimize your listings and streamline your workflow?
+
+Best,  
+[Your Name]  
+PriceLabs",gpt-4.1,169,98,267,0.001122
+carlos.wilson@rentalspro.com,standard_smb,"Subject: Boost RevPAR for Your Boutique Hotel with PriceLabs
+
+Hi Carlos,
+
+I noticed Carlos’s Management uses Beds24 to run your boutique hotel in Europe. I’m reaching out from PriceLabs—we help mid-sized teams like yours automate pricing and increase RevPAR with dynamic, data-driven rate updates that plug right into Beds24.
+
+Would you be open to a quick demo to see how PriceLabs can save you hours each week and drive more revenue?
+
+Best,  
+[Your Name]",gpt-4.1,171,97,268,0.001118
+carlos.miller@gmail.com,early_stage_generic,"Subject: Boost Boutique Hotel Revenue in LATAM
+
+Hi Carlos,
+
+I’m reaching out from PriceLabs—we help boutique hotels in LATAM like Carlos’s Stays increase revenue with dynamic pricing and automated rate updates. Even if you’re not using a PMS yet, our platform is easy to set up and gives you full control over your rates.
+
+Would you be open to a quick demo this week to see how PriceLabs could help maximize your bookings?
+
+Best,  
+[Your Name]",gpt-4.1,171,96,267,0.00111

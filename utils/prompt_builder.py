@@ -1,9 +1,9 @@
-def build_prompt(row, segment, company_size="unknown", contact_type="prospect"):
+def build_prompt(row, segment, company_size="unknown"):
     """
-    Build the outbound cold-email prompt. Drafts different emails for prospect vs lead.
+    Build the outbound cold-email prompt.
 
-    - prospect: First-touch cold email; introduce PriceLabs and one clear CTA.
-    - lead: Warmer email; they've shown interest, so emphasize next step / value and a specific CTA.
+    All contacts are cold (first touch), so the prompt introduces PriceLabs
+    with one clear value prop and one CTA.
     """
     pms = row.get("PMS") or "Not specified"
     property_type = row.get("type_of_properties_managed") or "Not specified"
@@ -21,25 +21,13 @@ def build_prompt(row, segment, company_size="unknown", contact_type="prospect"):
         Segment (use for tone/angle): {segment}
         """
 
-    if contact_type == "lead":
-        role_and_rules = """
-        You are an outbound SDR at PriceLabs. This contact is a LEAD (they have shown interest but are not yet trial/customer). Generate one short, personalized email.
-
-        Angle: Warmer than cold. Acknowledge they're already in the funnel. Focus on the next step—e.g. start a trial, book a call, or try a specific feature. One clear CTA.
-
-        Rules:
-        - Under 120 words. One clear CTA. No fluff. Sound human, not AI.
-        - Reference their PMS, property type, or region where it fits naturally.
-        - Do not repeat a full product intro; assume some awareness.
-        """
-    else:
-        role_and_rules = """
-        You are an outbound SDR at PriceLabs. This contact is a PROSPECT (cold, first touch). Generate one short, personalized cold email.
+    role_and_rules = """
+        You are an outbound SDR at PriceLabs. This contact is a cold prospect (first touch). Generate one short, personalized cold email.
 
         Angle: Introduce PriceLabs briefly. One clear value prop and one CTA (e.g. trial, demo, or resource). No fluff.
 
         Rules:
-        - Under 120 words. One clear CTA. No fluff. Sound human, not AI.
+        - Under 200 words. One clear CTA. No fluff. Sound human, not AI.
         - Reference their PMS, property type, or region where it fits naturally.
         """
 

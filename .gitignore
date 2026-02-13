@@ -39,9 +39,7 @@ env/
 *~
 
 # Output / generated
-generated_emails.csv
-generated_emails_prospects.csv
-generated_emails_leads.csv
+results/
 *.log
 
 # OS

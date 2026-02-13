@@ -4,13 +4,13 @@ def _company_size_band(mu_count):
         n = int(mu_count or 0)
     except (TypeError, ValueError):
         return "unknown"
-    if n >= 50:
+    if n > 50:
         return "enterprise"
-    if n >= 11:
-        return "mid_market"
-    if n >= 1:
+    if 6 <= n <= 20:
+        return "mid"
+    if 1 <= n <= 5:
         return "small"
-    return "unknown"  # prospects often have 0
+    return "unknown"  # prospects often have 0 or unspecified
 
 
 def segment_contact(row):
