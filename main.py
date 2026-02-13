@@ -30,10 +30,15 @@ def _run_pipeline(contacts: pd.DataFrame, limit: int) -> tuple[pd.DataFrame, flo
         result = generate_email(prompt)
 
         total_cost += result["cost_usd"]
+        complete_email = f"{result['greetings']}\n\n{result['body']}\n\n{result['signature']}"
         results.append({
             "email": row["email"],
             "segment": segment,
-            "generated_email": result["content"],
+            "subject": result["subject"],
+            "greetings": result["greetings"],
+            "body": result["body"],
+            "signature": result["signature"],
+            "complete_email": complete_email,
             "model": result["model"],
             "input_tokens": result["input_tokens"],
             "output_tokens": result["output_tokens"],
@@ -57,7 +62,7 @@ def run():
 
     out_emails, total_cost = _run_pipeline(contacts, limit)
 
-    out_path = _REPO_ROOT / f"generated_emails_{time.time()}.csv"
+    out_path = _REPO_ROOT / "results" / f"generated_emails_{time.time()}.csv"
     out_emails.to_csv(out_path, index=False)
     print(f"Cold outreach: {len(out_emails)} emails -> {out_path} (${total_cost:.4f})")
     print(f"Total: ${total_cost:.4f} USD")

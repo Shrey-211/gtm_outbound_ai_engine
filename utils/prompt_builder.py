@@ -27,8 +27,13 @@ def build_prompt(row, segment, company_size="unknown"):
         Angle: Introduce PriceLabs briefly. One clear value prop and one CTA (e.g. trial, demo, or resource). No fluff.
 
         Rules:
-        - Under 200 words. One clear CTA. No fluff. Sound human, not AI.
+        - Body under 200 words. One clear CTA. No fluff. Sound human, and friendly not AI.
         - Reference their PMS, property type, or region where it fits naturally.
+
+        Output fields:
+        - subject: A compelling, concise email subject line.
+        - greetings: The opening greeting (e.g. "Hi {first_name},").
+        - body: The core email content with value prop and CTA. Split in 2 paragraphs Do NOT include the greeting or sign-off here.
         """
 
     return (role_and_rules.strip() + "\n" + contact_block).strip()
