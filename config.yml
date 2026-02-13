@@ -1,0 +1,8 @@
+# Configuration for the outbound AI engine
+OUTBOUND_LIMIT: 5
+
+# Flags: Rules to filter out contacts before AI generation
+type: true
+Unsubscribed: true
+is_blocked_domain: true
+total_emails_sent: true

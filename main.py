@@ -132,7 +132,10 @@ def run():
     # ── Stages 1-3 happen inside load_cold_outreach_contacts ────────────
     contacts = load_cold_outreach_contacts(csv_path)
 
-    limit = int(os.environ.get("OUTBOUND_LIMIT", "5"))
+    import yaml
+    with open(_REPO_ROOT / "config.yml", "r") as f:
+        config = yaml.safe_load(f)
+    limit = int(config.get("OUTBOUND_LIMIT", 5))
     contacts = contacts.head(limit)
     print("=" * 64)
     print("  STAGE 4 · CONTACT LIMIT")
