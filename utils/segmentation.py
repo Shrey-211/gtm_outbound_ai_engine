@@ -1,3 +1,23 @@
+"""
+Segment contacts by property type for targeted cold outreach.
+
+Primary axis: type_of_properties_managed — determines which PriceLabs
+value props and angles to highlight in the email.
+Company size (from MU_count) is passed separately to the prompt builder.
+"""
+
+
+# Canonical segment labels keyed by lowercase property type
+_PROPERTY_TYPE_SEGMENTS = {
+    "vacation rental": "vacation_rental",
+    "short-term rental": "short_term_rental",
+    "hotel": "hotel",
+    "boutique hotel": "boutique_hotel",
+    "serviced apartment": "serviced_apartment",
+    "mixed": "mixed_portfolio",
+}
+
+
 def _company_size_band(mu_count):
     """Derive company size band from managed-unit count (proxy for scale)."""
     try:
@@ -6,37 +26,25 @@ def _company_size_band(mu_count):
         return "unknown"
     if n > 50:
         return "enterprise"
-    if 6 <= n <= 20:
+    if 6 <= n <= 50:
         return "mid"
     if 1 <= n <= 5:
         return "small"
-    return "unknown"  # prospects often have 0 or unspecified
+    return "unknown"
 
 
 def segment_contact(row):
     """
-    Returns segment label based on deterministic business rules.
-    Used for outbound: PMS, property type, region, and scale (MU_count) inform targeting.
+    Return a segment label based on the contact's property type.
+
+    Maps type_of_properties_managed to a canonical segment used by the
+    prompt builder to pick the right email angle.
+    Falls back to 'general' when the property type is missing or unrecognised.
     """
-
-    pms = str(row.get("PMS", "")).strip().lower()
-    mu_count = row.get("MU_count", 0) or 0
-    region = str(row.get("region", "")).strip().lower()
-    property_type = str(row.get("type_of_properties_managed", "")).strip().lower()
-    generic_domain = row.get("is_generic_domain", False)
-
-    if mu_count >= 50:
-        return "enterprise"
-
-    if pms and "hostaway" in pms and mu_count >= 10:
-        return "growth_hostaway"
-
-    if generic_domain:
-        return "early_stage_generic"
-
-    return "standard_smb"
+    raw = str(row.get("type_of_properties_managed", "")).strip().lower()
+    return _PROPERTY_TYPE_SEGMENTS.get(raw, "general")
 
 
 def get_company_size(row):
-    """Return company size band for use in prompts (Scenario A: company size)."""
+    """Return company size band for use in prompts."""
     return _company_size_band(row.get("MU_count"))

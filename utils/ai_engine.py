@@ -10,9 +10,7 @@ class ColdEmail(BaseModel):
     greetings: str
     body: str
 
-
 DEFAULT_SIGNATURE = "Best regards,\nShreyas Jadhav\nPriceLabs"
-
 
 # Standard tier pricing per 1M tokens (OpenAI platform.openai.com/docs/pricing)
 # Input and output USD per 1M tokens
